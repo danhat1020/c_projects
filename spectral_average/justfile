@@ -1,0 +1,2 @@
+default:
+	gcc -Wall -Wextra main.c -o main -lsndfile -lfftw3f -lm -lrandom

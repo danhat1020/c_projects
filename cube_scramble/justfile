@@ -1,0 +1,2 @@
+default:
+	gcc -Wall -Wextra -pedantic -g *.c -o main -lm -lrandom

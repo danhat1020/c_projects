@@ -1,0 +1,30 @@
+#pragma once
+
+#include <math.h>
+#include <random.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+typedef float f32;
+typedef double f64;
+
+#define WIDTH 1280
+#define HEIGHT 720
+#define FPS 240
+
+#define RES 20
+#define COLS (WIDTH / RES)
+#define ROWS (HEIGHT / RES)
+#define GRID_SIZE (COLS * ROWS)
