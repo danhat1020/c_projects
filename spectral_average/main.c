@@ -1,10 +1,40 @@
 #include <fftw3.h>
+#include <libgen.h>
 #include <math.h>
 #include <random.h>
 #include <sndfile.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+void build_output_path(const char *input, const char *out_dir, char *out, int out_len) {
+    // get a mutable copy since basename/dirname may modify the string
+    char input_copy_a[1024], input_copy_b[1024];
+    strncpy(input_copy_a, input, sizeof(input_copy_a) - 1);
+    strncpy(input_copy_b, input, sizeof(input_copy_b) - 1);
+
+    char *base = basename(input_copy_a);
+    char *in_dir = dirname(input_copy_b);
+
+    // strip extension
+    char stem[1024];
+    strncpy(stem, base, sizeof(stem) - 1);
+    char *dot = strrchr(stem, '.');
+    char ext[32] = "";
+    if (dot) {
+        strncpy(ext, dot, sizeof(ext) - 1); // e.g. ".wav"
+        dot[0] = '\0';                      // stem is now "song"
+    }
+
+    // decide output dir
+    const char *dir = out_dir ? out_dir : in_dir;
+
+    // append "_out" if output dir matches input dir, or no dir was given
+    int same_dir = (out_dir == NULL) || (strcmp(out_dir, in_dir) == 0);
+    const char *suffix = same_dir ? "_out" : "";
+
+    snprintf(out, out_len, "%s/%s%s%s", dir, stem, suffix, ext);
+}
 
 float spectral_flatness(float *mags, int bins) {
     float log_sum = 0.0f, sum = 0.0f;
@@ -20,13 +50,20 @@ float spectral_flatness(float *mags, int bins) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 3) {
-        printf("Usage: %s input.wav output.wav\n", argv[0]);
+    if (argc < 2) {
+        printf("Usage: %s input.wav [output_dir]\n", argv[0]);
         return 1;
     }
 
+    const char *input_path = argv[1];
+    const char *out_dir = argc >= 3 ? argv[2] : NULL;
+
+    char output_path[1024];
+    build_output_path(input_path, out_dir, output_path, sizeof(output_path));
+    printf("Output: %s\n", output_path);
+
     SF_INFO info = {0};
-    SNDFILE *in_file = sf_open(argv[1], SFM_READ, &info);
+    SNDFILE *in_file = sf_open(input_path, SFM_READ, &info);
     if (!in_file) {
         printf("Failed to open input file: %s\n", sf_strerror(NULL));
         return 1;
@@ -57,7 +94,7 @@ int main(int argc, char **argv) {
     free(audio);
 
     // FFT setup
-    int frame_size = info.samplerate / 5; // ~200ms
+    int frame_size = info.samplerate / 10; // ~200ms
     int bins = frame_size / 2 + 1;
     int num_frames = frames / frame_size;
 
@@ -125,8 +162,8 @@ int main(int argc, char **argv) {
     }
 
     // threshold pass
-    float threshold = 0.20f;
-    float dampen = 0.5f;
+    float threshold = 0.25f;
+    float dampen = 0.05f;
     float amplify = 1.5f;
 
     for (int i = 0; i < bins; i++) {
@@ -149,7 +186,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < frame_size; i++)
         window[i] = 0.5f * (1.0f - cosf(2.0f * M_PI * i / (frame_size - 1)));
 
-    int hop = frame_size / 4; // 50% overlap
+    int hop = frame_size * (1.0f - 0.75f);
     int out_secs = 15;
     int out_frames = info.samplerate * out_secs;
 
@@ -214,7 +251,7 @@ int main(int argc, char **argv) {
     }
 
     info.frames = out_frames;
-    SNDFILE *out_file = sf_open(argv[2], SFM_WRITE, &info);
+    SNDFILE *out_file = sf_open(output_path, SFM_WRITE, &info);
     if (!out_file) {
         printf("Failed to open output file: %s\n", sf_strerror(NULL));
         free(left), free(right), free(left_out), free(right_out), free(interleaved);
