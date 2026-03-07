@@ -1,5 +1,9 @@
-#include "defs.h"
 #include <raylib.h>
+
+#define WIDTH 1280
+#define HEIGHT 720
+#define TITLE "TITLE"
+#define FPS 60
 
 // === GLOBAL VARIABLES ===
 
@@ -16,11 +20,12 @@ void update(void) {
 
 int main(void) {
     // clang-format off
-    InitWindow(WIDTH, HEIGHT, "TITLE");
+    InitWindow(WIDTH, HEIGHT, TITLE);
     SetTargetFPS(FPS);
 
     init();
     while (!WindowShouldClose()) { update(); }
+
     clean();
 
     CloseWindow();

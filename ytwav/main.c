@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
     // build yt-dlp command
     char cmd[1024];
     snprintf(cmd, sizeof(cmd),
+             // yt-dlp -x --audio-format wav -o "out_dir/filename.wav" "https://youtube.com"
              "yt-dlp -x --audio-format wav -o \"%s/%s.%%(ext)s\" \"%s\"",
              out_dir, filename, url);
 
