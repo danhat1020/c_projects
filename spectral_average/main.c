@@ -162,9 +162,9 @@ int main(int argc, char **argv) {
     }
 
     // threshold pass
-    float threshold = 0.25f;
+    float threshold = 0.3f;
     float dampen = 0.05f;
-    float amplify = 1.5f;
+    float amplify = 2.0f;
 
     for (int i = 0; i < bins; i++) {
         if (avg_mags_left[i] < threshold) {

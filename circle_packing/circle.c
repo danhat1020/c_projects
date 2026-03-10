@@ -10,8 +10,8 @@ Circle create_circle(f32 x, f32 y) {
 
 void circle_render(Circle *circle) {
     if (circle->radius > 0) {
-        DrawCircle(circle->x, circle->y, circle->radius, (Color){255, 255, 255, 60});
-        DrawCircleLines(circle->x, circle->y, circle->radius, WHITE);
+        DrawCircle(circle->x, circle->y, circle->radius, (Color){60, 60, 60, 255});
+        DrawCircleLines(circle->x, circle->y, circle->radius, RAYWHITE);
     }
 }
 
@@ -25,6 +25,6 @@ void _edges(Circle *circle) {
 void circle_grow(Circle *circle) {
     _edges(circle);
     if (circle->growing) {
-        circle->radius += 1;
+        circle->radius++;
     }
 }

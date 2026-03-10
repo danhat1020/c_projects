@@ -3,31 +3,35 @@
 
 #include "circle.h"
 
+#define SIZE (1024 * 2)
+
 // === GLOBAL VARIABLES ===
 Circle *circles;
 i32 c_idx;
 
 void init(void) {
-    circles = malloc(sizeof(Circle) * 1024);
+    circles = calloc(SIZE, sizeof(Circle));
     c_idx = 0;
+    printf("\n");
 }
 
 void clean(void) {
     free(circles);
+    printf("\n\n");
 }
 
 void update(void) {
-    if (c_idx < 1024 && rng() < 0.5) {
-        circles[c_idx++] = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
-        for (i32 i = 0; i < c_idx - 1; i++) {
-            Circle a = circles[i];
-            Circle b = circles[c_idx - 1];
+    if (c_idx < SIZE) {
+        Circle a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
+        for (i32 i = 0; i < c_idx; i++) {
+            Circle b = circles[i];
             f32 dist = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
             if (dist < a.radius + b.radius) {
-                circles[c_idx++] = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
+                a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
+                i = -1;
             }
         }
-        printf("%d\n", c_idx);
+        circles[c_idx++] = a;
     }
 
     BeginDrawing();
@@ -48,18 +52,21 @@ void update(void) {
         circle_render(&circles[i]);
     }
     EndDrawing();
+
+    printf("\r%.2f%%", 100.0f * (float)c_idx / (float)SIZE);
+    fflush(stdout);
 }
 
 int main(void) {
-    // clang-format off
     InitWindow(WIDTH, HEIGHT, TITLE);
     SetTargetFPS(FPS);
 
     init();
-    while (!WindowShouldClose()) { update(); }
+    while (!WindowShouldClose()) {
+        update();
+    }
     clean();
 
     CloseWindow();
     return 0;
-    // clang-format on
 }

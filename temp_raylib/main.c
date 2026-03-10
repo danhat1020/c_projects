@@ -11,24 +11,22 @@ void init(void) {}
 
 void clean(void) {}
 
-void update(void) {
-    // render
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
-}
+void update(void) {}
 
 int main(void) {
-    // clang-format off
     InitWindow(WIDTH, HEIGHT, TITLE);
     SetTargetFPS(FPS);
 
     init();
-    while (!WindowShouldClose()) { update(); }
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+        update();
+        EndDrawing();
+    }
 
     clean();
 
     CloseWindow();
     return 0;
-    // clang-format on
 }

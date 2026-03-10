@@ -26,4 +26,4 @@ const i32 width = 1280;
 const i32 height = 720;
 const i32 fps = 120;
 
-const i32 ball_count = 50;
+const i32 ball_count = 60;
