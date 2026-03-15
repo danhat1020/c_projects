@@ -1,0 +1,2 @@
+default:
+    clang *.c -o main -Wall -Wextra -lrandom -lm

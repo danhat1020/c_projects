@@ -21,17 +21,24 @@ void clean(void) {
 }
 
 void update(void) {
-    if (c_idx < SIZE) {
-        Circle a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
-        for (i32 i = 0; i < c_idx; i++) {
-            Circle b = circles[i];
-            f32 dist = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-            if (dist < a.radius + b.radius) {
-                a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
-                i = -1;
+    for (i32 j = 0; j < 3; j++) {
+        if (c_idx < SIZE) {
+            Circle a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
+            for (i32 i = 0; i < c_idx; i++) {
+                Circle b = circles[i];
+                f32 dist = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+                if (dist < a.radius + b.radius) {
+                    a = create_circle(floor(rng_range(0, WIDTH)), floor(rng_range(0, HEIGHT)));
+                    i = -1;
+                }
             }
+            circles[c_idx++] = a;
+
+            printf("\r%.2f%%", 100.0f * (float)c_idx / (float)SIZE);
+            fflush(stdout);
+        } else {
+            break;
         }
-        circles[c_idx++] = a;
     }
 
     BeginDrawing();
@@ -52,9 +59,6 @@ void update(void) {
         circle_render(&circles[i]);
     }
     EndDrawing();
-
-    printf("\r%.2f%%", 100.0f * (float)c_idx / (float)SIZE);
-    fflush(stdout);
 }
 
 int main(void) {

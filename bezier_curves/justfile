@@ -1,2 +1,2 @@
 default:
-	gcc -Wall -Wextra -pedantic main.c -o main -lraylib -lm
+	gcc -Wall -Wextra -pedantic *.c -o main -lraylib -lm
