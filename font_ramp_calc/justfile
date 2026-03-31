@@ -1,2 +1,0 @@
-default:
-    clang *.c -o main -Wall -Wextra -lm

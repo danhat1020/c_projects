@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+
+# ANSI escape codes
+YELLOW="\033[38;2;180;160;120m"
+RESET="\033[0m"
+
+# compiler options
+CC="clang"
+CFLAGS="-O2 -Wall -Wextra"
+LIBS="-lraylib -lm -lrandom"
+OUTPUT="main"
+
+run_command() {
+  local command="$1"
+  echo -e "${YELLOW}$command${RESET}"
+  mkdir -p ./out/
+  eval $command
+}
+
+run_command "$CC ./src/*.c -o ./out/$OUTPUT $CFLAGS $LIBS" # build
+./out/$OUTPUT # run
+rm -rf ./out/ # clean
